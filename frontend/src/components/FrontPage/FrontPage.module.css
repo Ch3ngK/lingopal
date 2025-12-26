@@ -1,0 +1,46 @@
+/* src/components/FrontPage/FrontPage.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(to bottom, #e0f2fe, #bae6fd); /* light blue gradient */
+  padding: 16px;
+  text-align: center;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #1e3a8a; /* dark blue */
+  margin-bottom: 16px;
+}
+
+.tagline {
+  font-size: 1.25rem;
+  color: #334155; /* gray-blue */
+  margin-bottom: 32px;
+}
+
+.startButton {
+  background-color: #3b82f6; /* blue */
+  color: white;
+  font-size: 1.25rem;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.startButton:hover {
+  background-color: #2563eb; /* darker blue on hover */
+}
+
+.features {
+  margin-top: 24px;
+  color: #475569; /* gray */
+  font-size: 1rem;
+}

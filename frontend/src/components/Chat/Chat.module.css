@@ -1,0 +1,28 @@
+/* src/components/Chat/Chat.module.css */
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 16px;
+}
+
+.chatInputContainer {
+  display: flex;
+  margin-top: auto;
+}
+
+.inputBox {
+  flex: 1;
+  padding: 8px;
+  border-radius: 4px 0 0 4px;
+  border: 1px solid #ccc;
+}
+
+.sendButton {
+  padding: 8px 16px;
+  border-radius: 0 4px 4px 0;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
