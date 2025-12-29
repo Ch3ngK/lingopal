@@ -1,9 +1,22 @@
 import React, { useState } from "react";
 import MessageBubble from "../MessageBubble/MessageBubble";
+import styles from "./Chat.module.css";
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<{ text: string; sender: "user" | "ai" }[]>([]);
   const [input, setInput] = useState("");
+  
+  const generateFakeAIResponse = (userText: string) => {
+    if (userText.toLowerCase().includes("go play games")) {
+      return "You're almost there 😊 \nCorrected: I went to play video games. What kind of games did you play?";
+    } 
+
+    if (userText.toLowerCase().includes("你好")) {
+      return "很好！你今天过得怎么样？";
+    }
+
+    return "Nice! Tell me more!"; 
+  }; 
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -19,7 +32,7 @@ const Chat: React.FC = () => {
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { text: `hello`, sender: "ai" },
+        { text: generateFakeAIResponse(userMessage), sender: "ai" },
       ]);
     }, 500); // small delay for realism
   };
@@ -29,27 +42,32 @@ const Chat: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen p-4">
-      <div className="flex-1 overflow-y-auto mb-4">
+    <div className={styles.chatContainer}>
+      <div className={styles.messages}>
         {messages.map((msg, index) => (
           <MessageBubble key={index} text={msg.text} sender={msg.sender} />
         ))}
       </div>
-      <div className="flex">
+      <div className={styles.chatInputContainer}>
+      <form
+        className={styles.inputForm}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSend();
+        }}
+      >
         <input
-          className="flex-1 border p-2 rounded-l-md"
+          className={styles.inputBox}
           type="text"
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <button
-          className="bg-blue-500 text-white px-4 rounded-r-md"
-          onClick={handleSend}
-        >
+        <button className={styles.sendButton} type="submit">
           Send
         </button>
-      </div>
+      </form>
+    </div>
     </div>
   );
 };
