@@ -2,26 +2,29 @@ import React, { useState } from "react";
 import MessageBubble from "../MessageBubble/MessageBubble";
 import styles from "./Chat.module.css";
 
-const Chat: React.FC = () => {
-  const [messages, setMessages] = useState<{ text: string; sender: "user" | "ai" }[]>([]);
+const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
+  const [messages, setMessages] = useState<{ text: string; sender: "user" | "ai"; correction?: string }[]>([]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   
   const generateFakeAIResponse = (userText: string) => {
     if (userText.toLowerCase().includes("go play games")) {
-      return "You're almost there 😊 \nCorrected: I went to play video games. What kind of games did you play?";
-    } 
-
+      return {
+        text:"You're almost there 😊 Corrected: ",
+        correction: "I went to play video games. What kind of games did you play?"
+      };
+    }
     if (userText.toLowerCase().includes("你好")) {
-      return "很好！你今天过得怎么样？";
+      return { text: "很好！你今天过得怎么样？", correction: "" };
     }
 
-    return "Nice! Tell me more!"; 
+    return { text: "Nice! Tell me more!", correction: "" }; 
   }; 
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim()) return; //if input is empty, do nothing 
 
-    // Add user message
+    // Add user message to the chat history
     setMessages((prev) => [...prev, { text: input, sender: "user" }]);
 
     // Clear input
@@ -32,20 +35,31 @@ const Chat: React.FC = () => {
     setTimeout(() => {
       setMessages((prev) => [
         ...prev,
-        { text: generateFakeAIResponse(userMessage), sender: "ai" },
+        { ...generateFakeAIResponse(userMessage), sender: "ai" },
       ]);
     }, 500); // small delay for realism
-  };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") handleSend();
+    setIsTyping(true); 
+
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev, 
+        {...generateFakeAIResponse(userMessage), sender: "ai"},
+      ]);
+      setIsTyping(false); 
+    }, 1000);
   };
 
   return (
     <div className={styles.chatContainer}>
       <div className={styles.messages}>
         {messages.map((msg, index) => (
-          <MessageBubble key={index} text={msg.text} sender={msg.sender} />
+          <MessageBubble 
+          key={index} 
+          text={msg.text} 
+          correction={msg.correction}
+          sender={msg.sender} 
+          />
         ))}
       </div>
       <div className={styles.chatInputContainer}>

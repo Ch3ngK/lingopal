@@ -1,19 +1,26 @@
 import React from "react";
+import styles from "./MessageBubble.module.css";
 
 interface MessageBubbleProps {
     text: string; 
     sender: "user" | "ai";
+    correction?: string; 
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ text, sender}) => {
+const MessageBubble: React.FC<MessageBubbleProps> = ({ text, sender, correction}) => {
     const bubbleStyle = 
         sender === "user"
-            ? "bg-blue-500 text-white self-end"
-            : "bg-gray-300 text-black self-start";
+            ? styles.userBubble
+            : styles.aiBubble;
     
     return (
     <div className={`max-w-xs p-2 rounded-md my-1 ${bubbleStyle}`}>
-      {text}
+      <span>{text}</span>
+      {correction && (
+        <span className={styles.correction}>
+          {correction}
+          </span>
+          )}
     </div>
   );
 };

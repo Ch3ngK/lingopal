@@ -1,0 +1,27 @@
+.userBubble {
+  background-color: #3b82f6; /* blue */
+  color: white;
+  align-self: flex-end;
+  max-width: 60%;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.aiBubble {
+  background-color: #e5e7eb; /* gray */
+  color: black;
+  align-self: flex-start;
+  max-width: 60%;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.correction {
+  background-color: #fffa90; /* yellow highlight */
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin-left: 4px;
+}
