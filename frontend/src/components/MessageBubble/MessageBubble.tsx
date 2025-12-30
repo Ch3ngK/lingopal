@@ -5,9 +5,15 @@ interface MessageBubbleProps {
     text: string; 
     sender: "user" | "ai";
     correction?: string; 
+    followUp?: string; 
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ text, sender, correction}) => {
+const MessageBubble: React.FC<MessageBubbleProps> = ({ 
+  text, 
+  sender, 
+  correction,
+  followUp
+}) => {
     const bubbleStyle = 
         sender === "user"
             ? styles.userBubble
@@ -16,11 +22,17 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ text, sender, correction}
     return (
     <div className={`max-w-xs p-2 rounded-md my-1 ${bubbleStyle}`}>
       <span>{text}</span>
-      {correction && (
+      {correction && ( //basically works like an if-else statement(truthy and falsy)
         <span className={styles.correction}>
           {correction}
           </span>
           )}
+
+      {followUp && (
+        <div className={styles.followUp}>
+          {followUp}
+        </div>
+      )}
     </div>
   );
 };

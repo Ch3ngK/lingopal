@@ -3,18 +3,25 @@ import MessageBubble from "../MessageBubble/MessageBubble";
 import styles from "./Chat.module.css";
 
 const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
-  const [messages, setMessages] = useState<{ text: string; sender: "user" | "ai"; correction?: string }[]>([]);
+  const [messages, setMessages] = useState<{ 
+    text: string; 
+    sender: "user" | "ai"; 
+    correction?: string;
+    followUp?: string;
+   }[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   
   const generateFakeAIResponse = (userText: string) => {
-    if (userText.toLowerCase().includes("go play games")) {
+    const text = userText.toLowerCase();
+    if (text.includes("go play games")) {
       return {
         text:"You're almost there 😊 Corrected: ",
-        correction: "I went to play video games. What kind of games did you play?"
+        correction: "I went to play video games." ,
+        followUp: "What kind of games did you play?"
       };
     }
-    if (userText.toLowerCase().includes("你好")) {
+    if (text.includes("你好")) {
       return { text: "很好！你今天过得怎么样？", correction: "" };
     }
 
@@ -31,16 +38,10 @@ const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
     const userMessage = input;
     setInput("");
 
-    // Hardcoded AI reply for now
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        { ...generateFakeAIResponse(userMessage), sender: "ai" },
-      ]);
-    }, 500); // small delay for realism
-
+    //Show typing indicator 
     setIsTyping(true); 
 
+    // Hardcoded AI reply for now
     setTimeout(() => {
       setMessages((prev) => [
         ...prev, 
@@ -57,8 +58,9 @@ const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
           <MessageBubble 
           key={index} 
           text={msg.text} 
+          sender={msg.sender}
           correction={msg.correction}
-          sender={msg.sender} 
+          followUp={msg.followUp}
           />
         ))}
       </div>
