@@ -1,16 +1,24 @@
-import "dotenv/config";   // ✅ must be first to load env variables
+// index.ts
+import "dotenv/config";   // Load environment variables FIRST
 import express from "express";
 import cors from "cors";
 import { getAIResponse } from "./chat";
+import path from "path";
 
-const app = express();
-app.use(cors());          // allow frontend requests
-app.use(express.json());  // parse JSON body
+// Explicitly load .env from project root
+// Adjust the path based on where you're running from
+const envPath = path.resolve(process.cwd(), ".env");
+console.log("Looking for .env at:", envPath);
 
 // Test env variable
-console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? "✅ loaded" : "❌ missing");
+console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? 
+  `✅ loaded (${process.env.OPENAI_API_KEY.substring(0, 8)}...)` : 
+  "❌ missing");
 
-// API endpoint for chat
+const app = express();
+app.use(cors());
+app.use(express.json());
+
 app.post("/api/chat", async (req, res) => {
   const { text, language } = req.body;
 
@@ -23,7 +31,6 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// Start server
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`AI server running on http://localhost:${PORT}`);

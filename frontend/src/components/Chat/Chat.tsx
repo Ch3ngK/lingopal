@@ -15,10 +15,15 @@ const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
   
   //Reset chat after changing language
   useEffect(() => {
+    const el = document.getElementById('chatContainer');
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages]);
+
+  useEffect(() => {
     setMessages([]);
   }, [language]);
 
-  const generateFakeAIResponse = (userText: string) => {
+  /*const generateFakeAIResponse = (userText: string) => {
     const text = userText.toLowerCase();
     if (language === "english") {
       if (text.includes("go play games")) {
@@ -67,9 +72,9 @@ const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
     }
 
     return { text: "Nice! Tell me more!", correction: "" }; 
-  }; 
+  }; */
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return; //if input is empty, do nothing 
 
     // Add user message to the chat history
@@ -82,18 +87,50 @@ const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
     //Show typing indicator 
     setIsTyping(true); 
 
+    try {
+      const aiResponse = await sendMessageToAI(userMessage, language); 
+
+      setMessages(prev => [
+        ...prev,
+        {
+          text: aiResponse.text || "AI failed", 
+          correction: aiResponse.correction,
+          followUp: aiResponse.followUp,
+          sender: "ai",
+        }
+      ]);
+    } catch (err) {
+      console.error(err); 
+      setMessages(prev => [...prev, { text: "AI failed", sender: "ai"}]);
+    } finally {
+      setIsTyping(false); 
+    }
+
     // Hardcoded AI reply for now
-    setTimeout(() => {
+    /*setTimeout(() => {
       setMessages((prev) => [
         ...prev, 
         {...generateFakeAIResponse(userMessage), sender: "ai"},
       ]);
       setIsTyping(false); 
-    }, 1000);
+    }, 1000);*/
   };
 
+  async function sendMessageToAI(message: string, language: string) {
+  const response = await fetch("http://localhost:3001/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ text: message, language }),
+  });
+
+  return response.json();
+}
+
+
   return (
-    <div className={styles.chatContainer}>
+    <div id ="chatContainer" className={styles.chatContainer}>
       <div className={styles.messages}>
         {messages.map((msg, index) => (
           <MessageBubble 

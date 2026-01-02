@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Node reads this
+  apiKey: process.env.OPENAI_API_KEY!, // Node reads this
 });
 
 export async function getAIResponse(message: string, language: string) {

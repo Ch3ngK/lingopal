@@ -13,6 +13,11 @@
   margin-top: auto;
 }
 
+.correction {
+  background-color: yellow; 
+  font-weight: bold; 
+}
+
 .messages {
   flex: 1;
   overflow-y: auto; 
