@@ -23,57 +23,6 @@ const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
     setMessages([]);
   }, [language]);
 
-  /*const generateFakeAIResponse = (userText: string) => {
-    const text = userText.toLowerCase();
-    if (language === "english") {
-      if (text.includes("go play games")) {
-        return {
-          text:"You're almost there 😊 Corrected: ",
-          correction: "I went to play video games." ,
-          followUp: "What kind of games did you play?"
-        };
-      }
-    }
-
-    if (language === "mandarin") {
-      if (text.includes("你好")){
-        return { text: "很好！你今天过得怎么样？", correction: "" };
-      }
-      if (text.includes("去玩游戏")) {
-        return {
-          text: "你几乎正确 😊 修改: ",
-          correction: "我去玩了游戏。",
-          followUp: "你玩了什么游戏？"
-        };
-      }
-      return { text: "我们继续聊天吧 😊" };
-    }
-
-    if(language === "thai") {
-      if (text.includes("ไปเล่นเกม")) {
-        return {
-          text: "เกือบถูกแล้ว 😊 แก้ไข: ",
-          correction: "ฉันไปเล่นเกมส์",
-          followUp: "คุณเล่นเกมอะไรบ้าง?"
-        };
-      }
-      return {text: "ดีมาก! วันนี้เป็นยังไงบ้าง?" };
-    }
-
-    if(language === "cantonese") {
-      if (text.includes("去玩遊戲")) {
-        return {
-          text: "你幾乎啱 😊 修改: ",
-          correction: "我去咗打機。",
-          followUp: "你打咗咩遊戲？"
-        };
-      }
-      return {text: "唔錯呀！你今日點呀？" };
-    }
-
-    return { text: "Nice! Tell me more!", correction: "" }; 
-  }; */
-
   const handleSend = async () => {
     if (!input.trim()) return; //if input is empty, do nothing 
 
@@ -105,15 +54,6 @@ const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
     } finally {
       setIsTyping(false); 
     }
-
-    // Hardcoded AI reply for now
-    /*setTimeout(() => {
-      setMessages((prev) => [
-        ...prev, 
-        {...generateFakeAIResponse(userMessage), sender: "ai"},
-      ]);
-      setIsTyping(false); 
-    }, 1000);*/
   };
 
   async function sendMessageToAI(message: string, language: string) {
