@@ -1,128 +1,133 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import MessageBubble from "../MessageBubble/MessageBubble";
 import styles from "./Chat.module.css";
 
-const Chat: React.FC = () => { //Readct.FC stands for React Functional Component
-  const [messages, setMessages] = useState<{ 
-    text: string; 
-    sender: "user" | "ai"; 
-    correction?: string;
-    followUp?: string;
-   }[]>([]);
+type Language = "english" | "mandarin" | "cantonese" | "thai";
+
+interface Message {
+  text: string;
+  sender: "user" | "ai";
+  correction?: string;
+  followUp?: string;
+}
+
+const Chat: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [language,setLanguage] = useState<"english" | "mandarin" | "cantonese" | "thai">("english");
-  
-  //Reset chat after changing language
+  const [language, setLanguage] = useState<Language>("english");
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  // Scroll to bottom whenever messages change
   useEffect(() => {
-    const el = document.getElementById('chatContainer');
-    if (el) el.scrollTop = el.scrollHeight;
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Reset chat when language changes
   useEffect(() => {
     setMessages([]);
   }, [language]);
 
   const handleSend = async () => {
-    if (!input.trim()) return; //if input is empty, do nothing 
+    if (!input.trim()) return;
 
-    // Add user message to the chat history
-    setMessages((prev) => [...prev, { text: input, sender: "user" }]);
-
-    // Clear input
     const userMessage = input;
+    setMessages((prev) => [...prev, { text: userMessage, sender: "user" }]);
     setInput("");
-
-    //Show typing indicator 
-    setIsTyping(true); 
+    setIsTyping(true);
 
     try {
-      const aiResponse = await sendMessageToAI(userMessage, language); 
+      const aiResponse = await sendMessageToAI(userMessage, language);
 
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
-          text: aiResponse.text || "AI failed", 
+          text: aiResponse.text || "AI failed",
           correction: aiResponse.correction,
           followUp: aiResponse.followUp,
           sender: "ai",
-        }
+        },
       ]);
     } catch (err) {
-      console.error(err); 
-      setMessages(prev => [...prev, { text: "AI failed", sender: "ai"}]);
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        { text: "AI failed", sender: "ai" },
+      ]);
     } finally {
-      setIsTyping(false); 
+      setIsTyping(false);
     }
   };
 
-  async function sendMessageToAI(message: string, language: string) {
-  const response = await fetch("http://localhost:3001/api/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ text: message, language }),
-  });
+  async function sendMessageToAI(message: string, language: Language) {
+    const response = await fetch("http://localhost:3001/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: message, language }),
+    });
 
-  return response.json();
-}
+    if (!response.ok) {
+      throw new Error("AI request failed");
+    }
 
+    return response.json();
+  }
 
   return (
-    <div id ="chatContainer" className={styles.chatContainer}>
+    <div className={styles.chatContainer}>
       <div className={styles.messages}>
         {messages.map((msg, index) => (
-          <MessageBubble 
-          key={index} 
-          text={msg.text} 
-          sender={msg.sender}
-          correction={msg.correction}
-          followUp={msg.followUp}
+          <MessageBubble
+            key={index}
+            text={msg.text}
+            sender={msg.sender}
+            correction={msg.correction}
+            followUp={msg.followUp}
           />
         ))}
         {isTyping && (
-        <div className={styles.typingIndicator}>
-          LingoPal is typing
-          <span className={styles.dot}>.</span>
-          <span className={styles.dot}>.</span>
-          <span className={styles.dot}>.</span>
-        </div>
-      )}
+          <div className={styles.typingIndicator}>
+            LingoPal is typing
+            <span className={styles.dot}>.</span>
+            <span className={styles.dot}>.</span>
+            <span className={styles.dot}>.</span>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
+
       <div className={styles.chatInputContainer}>
-      <form
-        className={styles.inputForm}
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSend();
-        }}
-      >
-        <input
-          className={styles.inputBox}
-          type="text"
-          placeholder="Type your message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <select 
-          value={language}
-          onChange={(e) => setLanguage(e.target.value as any)}
-          className={styles.languageSelect}
+        <form
+          className={styles.inputForm}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSend();
+          }}
         >
-          <option value="english">English 🇬🇧</option>
-          <option value="mandarin">Mandarin 🇨🇳</option>
-          <option value="cantonese">Cantonese 🇭🇰</option>
-          <option value="thai">Thai 🇹🇭</option>
-        </select>
-        <button className={styles.sendButton} type="submit">
-          Send
-        </button>
-      </form>
-    </div>
+          <input
+            className={styles.inputBox}
+            type="text"
+            placeholder="Type your message..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as Language)}
+            className={styles.languageSelect}
+          >
+            <option value="english">English 🇬🇧</option>
+            <option value="mandarin">Mandarin 🇨🇳</option>
+            <option value="cantonese">Cantonese 🇭🇰</option>
+            <option value="thai">Thai 🇹🇭</option>
+          </select>
+          <button className={styles.sendButton} type="submit">
+            Send
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
 export default Chat;
-
